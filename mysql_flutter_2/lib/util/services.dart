@@ -1,113 +1,93 @@
+// ignore_for_file: avoid_print, constant_identifier_names
+
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:mysql_flutter_2/model/employee.dart';
 
 class Services {
   static const ROOT = 'http://localhost/EmployeesDB/employee_actions.php';
-  static const _CREATE_TABLE_ACTION = 'CREATE_TABLE';
-  static const _GET_ALL_ACTION = 'GET_ALL';
-  static const _ADD_EMP_ACTION = 'ADD_EMP';
-  static const _UPDATE_EMP_ACTION = 'UPDATE_EMP';
-  static const _DELTE_EMP_ACTION = 'DEL_EMP';
+  static const String _GET_ACTION = 'GET_ALL';
+  static const String _CREATE_TABLE = 'CREATE_TABLE';
+  static const String _ADD_EMP_ACTION = 'ADD_EMP';
+  static const String _UPDATE_EMP_ACTION = 'UPDATE_EMP';
+  static const String _DELETE_EMP_ACTION = 'DELETE_EMP';
 
-  // Method to create the table Employees
-  static Future<String> createTable() async {
-    try {
-      // Add the parameters to pass to the request
-      var map = Map<String, dynamic>();
-      map['action'] = _CREATE_TABLE_ACTION;
-      final response = await http.post(Uri.parse(ROOT), body: map);
-      print('Create Table Response: ${response.body}');
-      if (200 == response.statusCode) {
-        return response.body;
-      } else {
-        return 'ERROR';
-      }
-    } catch (e) {
-      return 'ERROR';
-    }
-  }
-
-  // Method to get all Employees
   static Future<List<Employee>> getEmployees() async {
     try {
-      var map = Map<String, dynamic>();
-      map['action'] = _GET_ALL_ACTION;
+      var map = <String, dynamic>{};
+      map["action"] = _GET_ACTION;
       final response = await http.post(Uri.parse(ROOT), body: map);
-      print('Get Employees Response: ${response.body}');
-      if (200 == response.statusCode) {
-        List<Employee> list = parseResponse(response.body);
+      print("getEmployees >> Response:: ${response.body}");
+      if (response.statusCode == 200) {
+        List<Employee> list = parsePhotos(response.body);
         return list;
       } else {
         List<Employee> list = [];
-        return list;
+        throw list;
       }
     } catch (e) {
       List<Employee> list = [];
-      return list; // Return an empty list on exception/error
+      return list;
     }
   }
 
-  static List<Employee> parseResponse(String responseBody) {
+  static List<Employee> parsePhotos(String responseBody) {
     final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
     return parsed.map<Employee>((json) => Employee.fromJson(json)).toList();
   }
 
-  // Method to add an Employee to the database
+  static Future<String> createTable() async {
+    try {
+      var map = <String, dynamic>{};
+      map["action"] = _CREATE_TABLE;
+      final response = await http.post(Uri.parse(ROOT), body: map);
+      print("createTable >> Response:: ${response.body}");
+      return response.body;
+    } catch (e) {
+      return 'error';
+    }
+  }
+
   static Future<String> addEmployee(String firstName, String lastName) async {
     try {
-      var map = Map<String, dynamic>();
+      var map = <String, dynamic>{};
       map["action"] = _ADD_EMP_ACTION;
       map["first_name"] = firstName;
       map["last_name"] = lastName;
       final response = await http.post(Uri.parse(ROOT), body: map);
-      print('Add Employee response: ${response.body}');
-      if (200 == response.statusCode) {
-        return response.body;
-      } else {
-        return 'Error';
-      }
+      print("addEmployee >> Response:: ${response.body}");
+      return response.body;
     } catch (e) {
-      return 'ERROR';
+      return 'error';
     }
   }
 
-  // Method to update an Employee
   static Future<String> updateEmployee(
       String empId, String firstName, String lastName) async {
     try {
-      var map = Map<String, dynamic>();
+      var map = <String, dynamic>{};
       map["action"] = _UPDATE_EMP_ACTION;
       map["emp_id"] = empId;
       map["first_name"] = firstName;
       map["last_name"] = lastName;
       final response = await http.post(Uri.parse(ROOT), body: map);
-      print('Update Employee response: ${response.body}');
-      if (200 == response.statusCode) {
-        return response.body;
-      } else {
-        return 'Error';
-      }
+      print("deleteEmployee >> Response:: ${response.body}");
+      return response.body;
     } catch (e) {
-      return 'ERROR';
+      return 'error';
     }
   }
 
-  // Method to delete an Employee
   static Future<String> deleteEmployee(String empId) async {
     try {
-      var map = Map<String, dynamic>();
-      map["action"] = _DELTE_EMP_ACTION;
+      var map = <String, dynamic>{};
+      map["action"] = _DELETE_EMP_ACTION;
       map["emp_id"] = empId;
       final response = await http.post(Uri.parse(ROOT), body: map);
-      print('Delete Employee response: ${response.body}');
-      if (200 == response.statusCode) {
-        return response.body;
-      } else {
-        return 'Error';
-      }
+      print("deleteEmployee >> Response:: ${response.body}");
+      return response.body;
     } catch (e) {
-      return 'ERROR';
+      return 'error';
     }
   }
 }

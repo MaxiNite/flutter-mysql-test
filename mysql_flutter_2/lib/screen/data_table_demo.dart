@@ -1,9 +1,11 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:mysql_flutter_2/model/employee.dart';
 import 'package:mysql_flutter_2/util/services.dart';
 
 class DataTableDemo extends StatefulWidget {
-  DataTableDemo() : super();
+  const DataTableDemo({super.key});
 
   final String title = "Flutter Data Table";
 
@@ -71,6 +73,8 @@ class DataTableDemoState extends State<DataTableDemo> {
         _employees = employees;
       });
       _showProgress(widget.title);
+      print("something: $_employees");
+      print("something again: $employees");
       print("Length: ${employees.length}");
     });
   }
