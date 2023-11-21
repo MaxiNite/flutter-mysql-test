@@ -1,5 +1,3 @@
-// This file should reside on the server, not inside this app.
-
 <?php
     $servername = "localhost";
     $username = "root";
